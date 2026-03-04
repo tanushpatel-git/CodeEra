@@ -1,0 +1,50 @@
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const  app = express();
+const cors = require('cors');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+require('dotenv').config({quiet: true});
+const userRoute = require('./routes/user.routes')
+
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Backend API',
+            version: '1.0.0',
+            description: 'API documentation for the backend',
+            contact: {
+                name: 'Developer'
+            }
+        },
+        servers: [
+            {
+                url: 'http://localhost:8001',
+                description: 'Development server'
+            }
+        ]
+    },
+    apis: ['./src/routes/*.js']
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+
+app.use(cors({
+    origin: process.env.FRONT_END_URL,
+    credentials: true,
+}))
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+
+// routes middleware
+app.use("/user" ,userRoute)
+
+
+
+module.exports = app;
