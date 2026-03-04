@@ -1,10 +1,10 @@
 import React from 'react'
-import LoginPage from "./pages/LoginPage.jsx";
+import HomePage from "./pages/HomePage.jsx";
 
 const App = () => {
     return (
         <div>
-            <LoginPage/>
+            <HomePage/>
         </div>
     )
 }
