@@ -9,7 +9,6 @@
     "dev": "nodemon server.js",
     "seed": "node src/controllers/createUserInMongo.js"
   },
-  "type": "commonjs",
   "keywords": [],
   "author": "",
   "license": "ISC",

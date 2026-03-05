@@ -1,32 +1,37 @@
-const {StreamChat} = require("stream-chat")
-require('dotenv').config({quiet: true});
-
+const { StreamChat } = require("stream-chat");
+require("dotenv").config({quiet: true});
 
 const apiKey = process.env.STREAM_API_KEY;
 const apiKeySecret = process.env.STREAM_API_SECRET;
 
 if (!apiKey || !apiKeySecret) {
-    console.error("No STREAM_API_KEY or STREAM_API_SECRET found.");
+    throw new Error("STREAM_API_KEY or STREAM_API_SECRET is missing");
 }
 
-export const chatStream = StreamChat.getInstance(apiKey, apiKeySecret);
+const chatStream = StreamChat.getInstance(apiKey, apiKeySecret);
 
 const upsertStreamUser = async (user) => {
     try {
-        await chatStream.upsertUser(user); // user is in object type
-        console.log("Successfully upserted user in stream");
+        if (!user?.id) {
+            throw new Error("User object must contain an id");
+        }
+
+        await chatStream.upsertUser(user);
+        console.log("Successfully upserted user in Stream");
     } catch (err) {
-        console.error("Failed to upsert user in stream", err);
+        console.error("Failed to upsert user in Stream", err);
     }
-}
+};
 
 const deleteStreamUser = async (userId) => {
     try {
-        await chatStream.deleteUser(userId.toString()); // userId is in string type
-        console.log("Successfully delete user in stream");
+        await chatStream.deleteUser(userId.toString(), {
+            hard_delete: true,
+        });
+        console.log("Successfully deleted user in Stream");
     } catch (err) {
-        console.error("Failed to delete user in stream", err);
+        console.error("Failed to delete user in Stream", err);
     }
-}
+};
 
-module.exports = {upsertStreamUser, deleteStreamUser};
+module.exports = { upsertStreamUser, deleteStreamUser, chatStream };
