@@ -1,17 +1,19 @@
 const {jsonTokenCreate,tokenVerify} = require('../utility/jsonTokenCreate');
-const createUserInMongo = require('../services/createUserInMongo')
-const loginUserCheck = require('../services/userLogin');
-const {passwordVerify} = require('../utility/hashPassword')
-const upsertStreamUser = require("../utility/stream");
-const deleteStreamUser = require("../utility/stream");
+const {loginUserCheck,createUserInMongo} = require('../services/userLogin');
+const {passwordVerify, hashPassword} = require('../utility/hashPassword');
+const { upsertStreamUser, deleteStreamUser } = require("../utility/stream");
 
 
 const userCreate = async (req, res) => {
     try{
-
         const data = req.body;
-        const userData = await createUserInMongo(data)
-        const token = await jsonTokenCreate(userData);
+        const hashPass = await hashPassword(data.password);
+        const userData = {...data,password:hashPass};
+        const createdUser = await createUserInMongo(userData);
+        const userDataWithId = {...userData, id: createdUser._id.toString()};
+        const token = await jsonTokenCreate(userDataWithId);
+
+        await upsertStreamUser(userDataWithId)
 
         // Send token in cookie
         res.cookie('token', token, {
@@ -21,18 +23,16 @@ const userCreate = async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000 // 1 day
         });
 
-        // await upsertStreamUser(userData)
-
         return res.status(200).json({
             status: 'success',
             message: 'User created successfully',
-            data: userData,
+            data: userDataWithId,
             token: token,
         })
 
     }catch(err){
 
-        return res.status(500).json({
+        return res.status(200).json({
             message:"Internal Server Error",
         })
 
@@ -49,12 +49,13 @@ const userLogin = async (req, res) => {
         const resultOfPasswordVerify = await passwordVerify(data.password, userData.password);
         if (resultOfPasswordVerify) {
             const token =  await jsonTokenCreate(userData);
+            const userDataWithId = {...userData.toObject(), id: userData._id.toString()};
+            await upsertStreamUser(userDataWithId)
             res.cookie('token', token, {
                 httpOnly: true,
                 secure: false,
-                sameSite: 'strict',
+                sameSite: 'lax',
             });
-            // upsertStreamUser(userData)
             return res.status(200).json({
                 status: 'success',
                 message: 'User login successfully',
@@ -74,10 +75,10 @@ const userLogin = async (req, res) => {
 
 const userLogout = async (req, res) => {
     try {
-        // const token = req.cookie.token;
-        // const {id} = tokenVerify(token);
+        const token = req.cookies.token;
+        const {id} = await tokenVerify(token);
+        await deleteStreamUser(id);
         res.cookie('token', null, { httpOnly: true, secure: false, sameSite: 'strict' });
-        // deleteStreamUser(id);
         return res.status(200).json({
             status: 'success',
             message: 'User logged out successfully',
@@ -94,24 +95,26 @@ const userLogout = async (req, res) => {
 
 const getUser = async (req, res) => {
     try{
-        const token = req.cookie.token;
-        // const {token} = req.body   // checking purpose send manually token from postman
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(200).json({message: 'You are not logged in'});
+        }
         const dataFromToken = await tokenVerify(token);
-        const data = await loginUserCheck(dataFromToken);
-        if (!data) {
-            return res.status(404).json({
+        if (!dataFromToken) {
+            return res.status(200).json({
                 status: 'failure',
                 message: 'User not found',
+                data:null
             })
         }
         return res.status(200).json({
             status: 'success',
             message:"User is exist",
-            data: data,
+            data: dataFromToken,
         })
     }catch(err){
-        return res.status(500).json({
-            message:"Internal Server Error",
+        return res.status(200).json({
+            message:"Not authenticated",
         })
     }
 }

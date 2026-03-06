@@ -1,7 +1,79 @@
-import {React,useState} from 'react'
+import {React, useState} from 'react'
+import {createUser, loginUser, getUser} from "../../service/loginService.js";
+import {useDispatch} from "react-redux";
+import {updateEmail, updateUser} from "../../redux/userDetails/userDetail.js";
 
 const LoginPopUp = ({onClick}) => {
     const [isLogin, setIsLogin] = useState(true);
+    const [loading, setLoading] = useState(false)
+    const dispatch = useDispatch();
+    const [loginData, setLoginData] = useState({
+        email: "",
+        password: "",
+    })
+    const [registrationData, setRegistrationData] = useState({
+        email: "",
+        password: "",
+        name: ""
+    })
+    const handleChange = e => {
+        if (isLogin) {
+            setLoginData({...loginData, [e.target.name]: e.target.value});
+        }else{
+            setRegistrationData({...registrationData, [e.target.name]: e.target.value});
+        }
+    }
+
+    const handleRegistration = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        const {message, status} = await createUser(registrationData);
+
+        alert(message);
+
+        setLoading(false);
+
+        if (status === 'success') {
+            const userData = await getUser();
+            if (userData && userData.data) {
+                dispatch(updateUser(userData.data.name));
+                dispatch(updateEmail(userData.data.email));
+            }
+            onClick();
+        }
+
+        setRegistrationData({
+            email: "",
+            password: "",
+            name: ""
+        })
+    }
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        const {message, status} = await loginUser(loginData);
+
+        alert(message);
+
+        setLoading(false);
+
+        if (status === 'success') {
+            const userData = await getUser();
+            if (userData && userData.data) {
+                dispatch(updateUser(userData.data.name));
+                dispatch(updateEmail(userData.data.email));
+            }
+            onClick();
+        }
+
+        setLoginData({
+            email: "",
+            password: "",
+        })
+    }
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center text-black">
@@ -24,12 +96,17 @@ const LoginPopUp = ({onClick}) => {
                     {isLogin ? "Login" : "Create Account"}
                 </h2>
 
-                <form className="space-y-4">
+                <form
+                    className="space-y-4"
+                    onSubmit={isLogin ? handleLogin : handleRegistration}
+                >
                     {/* Name (Register only) */}
                     {!isLogin && (
                         <input
                             type="text"
                             placeholder="Full Name"
+                            onChange={handleChange}
+                            name="name"
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     )}
@@ -38,6 +115,9 @@ const LoginPopUp = ({onClick}) => {
                     <input
                         type="email"
                         placeholder="Email Address"
+                        onChange={handleChange}
+                        value={isLogin ? loginData.email : registrationData.email}
+                        name="email"
                         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
@@ -45,6 +125,9 @@ const LoginPopUp = ({onClick}) => {
                     <input
                         type="password"
                         placeholder="Password"
+                        name="password"
+                        value={isLogin ? loginData.password : registrationData.password}
+                        onChange={handleChange}
                         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
@@ -63,20 +146,20 @@ const LoginPopUp = ({onClick}) => {
                         <>
                             Don’t have an account?{" "}
                             <button
-                                onClick={() => setIsLogin(false)}
+                                onClick={()=>setIsLogin(false)}
                                 className="text-blue-600 hover:underline"
                             >
-                                Register
+                                {loading ? "Registration....." : "Register"}
                             </button>
                         </>
                     ) : (
                         <>
                             Already have an account?{" "}
                             <button
-                                onClick={() => setIsLogin(true)}
+                                onClick={()=>setIsLogin(true)}
                                 className="text-blue-600 hover:underline"
                             >
-                                Login
+                                {loading ? "Login....." : "Login"}
                             </button>
                         </>
                     )}

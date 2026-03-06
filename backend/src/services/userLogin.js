@@ -13,4 +13,14 @@ const loginUserCheck = async (data) => {
      }
 }
 
-module.exports = loginUserCheck;
+const createUserInMongo = async (data) => {
+    try{
+        const user = await User.create(data);
+        return user;
+    }catch(err){
+        console.error(err);
+        throw err
+    }
+}
+
+module.exports = {loginUserCheck,createUserInMongo};

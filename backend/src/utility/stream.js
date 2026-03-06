@@ -1,4 +1,5 @@
 const { StreamChat } = require("stream-chat");
+const {StreamClient} = require("@stream-io/node-sdk");
 require("dotenv").config({quiet: true});
 
 const apiKey = process.env.STREAM_API_KEY;
@@ -8,11 +9,13 @@ if (!apiKey || !apiKeySecret) {
     throw new Error("STREAM_API_KEY or STREAM_API_SECRET is missing");
 }
 
-const chatStream = StreamChat.getInstance(apiKey, apiKeySecret);
+const streamClient = new StreamClient(apiKey, apiKeySecret); //this is for video calling feature
+const chatStream = StreamChat.getInstance(apiKey, apiKeySecret); // this is for chat feature
 
 const upsertStreamUser = async (user) => {
     try {
         if (!user?.id) {
+            console.log("upsert user id not found");
             throw new Error("User object must contain an id");
         }
 
@@ -34,4 +37,4 @@ const deleteStreamUser = async (userId) => {
     }
 };
 
-module.exports = { upsertStreamUser, deleteStreamUser, chatStream };
+module.exports = { upsertStreamUser, deleteStreamUser, chatStream , streamClient};

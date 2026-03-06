@@ -6,6 +6,9 @@ const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 require('dotenv').config({quiet: true});
 const userRoute = require('./routes/user.routes')
+const videoRoute = require('./routes/videoCalling.routes')
+const chatRoute = require('./routes/chat.routes')
+const sessionRoute = require('./routes/session.routes')
 
 const swaggerOptions = {
     swaggerDefinition: {
@@ -23,7 +26,19 @@ const swaggerOptions = {
                 url: 'http://localhost:8001',
                 description: 'Development server'
             }
-        ]
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT'
+                }
+            }
+        },
+        security: [{
+            bearerAuth: []
+        }]
     },
     apis: ['./src/routes/*.js']
 };
@@ -44,6 +59,9 @@ app.use(cookieParser());
 
 // routes middleware
 app.use("/user" ,userRoute)
+app.use("/access", videoRoute);
+app.use("/chat", chatRoute);
+app.use("/session", sessionRoute);
 
 
 
