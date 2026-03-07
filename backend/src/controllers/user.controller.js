@@ -32,6 +32,7 @@ const userCreate = async (req, res) => {
     }catch(err){
         console.error("User create error:", err);
         return res.status(500).json({
+            status: 'error',
             message:"Internal Server Error",
         })
 
@@ -67,6 +68,7 @@ const userLogin = async (req, res) => {
     }catch(err){
         console.error("Login error:", err);
         return res.status(500).json({
+            status:"failure",
             message:"Internal Server Error",
         })
     }
@@ -85,6 +87,7 @@ const userLogout = async (req, res) => {
 
     }catch(err){
         return res.status(500).json({
+            status:"failure",
             message:"Internal Server Error",
         })
 
@@ -112,6 +115,7 @@ const getUser = async (req, res) => {
         })
     }catch(err){
         return res.status(200).json({
+            status: 'failure',
             message:"Not authenticated",
         })
     }

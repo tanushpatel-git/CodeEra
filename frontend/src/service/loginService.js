@@ -1,13 +1,9 @@
-import axios from 'axios'
-
-const API_URL = import.meta.env.VITE_API_URL;
+import axiosInstance from '../lib/axios.js'
 
 export const getUser = async () => {
     try{
-        const response = await axios.get(`${API_URL}/user/getUser`, {
-            withCredentials: true
-        });
-        return response.data;
+        const response = await axiosInstance.get(`/user/getUser`);
+        return response.data.data;
     }catch(err){
         return null;
     }
@@ -15,10 +11,7 @@ export const getUser = async () => {
 
 export const createUser = async (data) => {
     try{
-        const res =  await axios.post(`${API_URL}/user/registration`, data, {
-            headers: { 'Content-Type': 'application/json' },
-            withCredentials: true
-        });
+        const res =  await axiosInstance.post(`/user/registration`, data);
         return res.data;
     }catch(err){
         console.log(err);
@@ -28,12 +21,7 @@ export const createUser = async (data) => {
 
 export const loginUser = async (data) => {
     try{
-        const res =  await axios.post(`${API_URL}/user/login`, data, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            withCredentials: true
-        });
+        const res =  await axiosInstance.post(`/user/login`, data);
         return res.data;
     }catch(err){
         console.log(err);
@@ -49,9 +37,7 @@ export const loginUser = async (data) => {
 
 export const logOutUser = async () => {
     try{
-        const res =  await axios.get(`${API_URL}/user/logout`, {
-            withCredentials: true
-        });
+        const res =  await axiosInstance.get(`/user/logout`);
         return res.data;
     }catch(err){
         console.log(err);
