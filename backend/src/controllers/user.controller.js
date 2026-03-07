@@ -10,10 +10,9 @@ const userCreate = async (req, res) => {
         const hashPass = await hashPassword(data.password);
         const userData = {...data,password:hashPass};
         const createdUser = await createUserInMongo(userData);
-        const userDataWithId = {...userData, id: createdUser._id.toString()};
-        const token = await jsonTokenCreate(userDataWithId);
+        const token = await jsonTokenCreate(createdUser);
 
-        await upsertStreamUser(userDataWithId)
+        await upsertStreamUser(createdUser)
 
         // Send token in cookie
         res.cookie('token', token, {
@@ -26,13 +25,13 @@ const userCreate = async (req, res) => {
         return res.status(200).json({
             status: 'success',
             message: 'User created successfully',
-            data: userDataWithId,
+            data: createdUser,
             token: token,
         })
 
     }catch(err){
-
-        return res.status(200).json({
+        console.error("User create error:", err);
+        return res.status(500).json({
             message:"Internal Server Error",
         })
 
@@ -49,8 +48,7 @@ const userLogin = async (req, res) => {
         const resultOfPasswordVerify = await passwordVerify(data.password, userData.password);
         if (resultOfPasswordVerify) {
             const token =  await jsonTokenCreate(userData);
-            const userDataWithId = {...userData.toObject(), id: userData._id.toString()};
-            await upsertStreamUser(userDataWithId)
+
             res.cookie('token', token, {
                 httpOnly: true,
                 secure: false,
@@ -67,6 +65,7 @@ const userLogin = async (req, res) => {
             })
         }
     }catch(err){
+        console.error("Login error:", err);
         return res.status(500).json({
             message:"Internal Server Error",
         })
@@ -76,8 +75,8 @@ const userLogin = async (req, res) => {
 const userLogout = async (req, res) => {
     try {
         const token = req.cookies.token;
-        const {id} = await tokenVerify(token);
-        await deleteStreamUser(id);
+        const {id} = await tokenVerify(token)
+        if (!id) return res.status(401).json({message: 'You are not allow to log out ! their is something went wrong'});
         res.cookie('token', null, { httpOnly: true, secure: false, sameSite: 'strict' });
         return res.status(200).json({
             status: 'success',
@@ -85,7 +84,6 @@ const userLogout = async (req, res) => {
         })
 
     }catch(err){
-
         return res.status(500).json({
             message:"Internal Server Error",
         })

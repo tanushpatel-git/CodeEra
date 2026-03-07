@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {userCreate,userLogout, userLogin,getUser} = require('../controllers/user.controller');
 const userValidator = require('../validators/userSchema.Validator');
-const userLoginValidator = require('../validators/userLogin.validator');
+const userLoginValidator = require('../validators/userLogin.Validator');
 
 /**
  * @swagger

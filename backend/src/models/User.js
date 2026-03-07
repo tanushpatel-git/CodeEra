@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+    image:{
+        type:String,
+        default:"https://www.kindpng.com/picc/m/620-6203229_whatsapp-profile-picture-icon-png-download-instagram-profile.png",
     }
 },{
     timestamps:true
