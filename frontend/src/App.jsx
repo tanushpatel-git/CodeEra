@@ -12,8 +12,8 @@ const App = () => {
         <>
             <Routes>
                 <Route path="/" element={<ManageLoginRedirect><HomePage /></ManageLoginRedirect>} />
-                <Route path="/problems" element={<Authcheck redirect="/"><ProblemPage /></Authcheck>}/>
-                <Route path="/dashboard" element={<Authcheck redirect="/"><DashboardPage /></Authcheck>}/>
+                <Route path="/problems" element={<Authcheck><ProblemPage /></Authcheck>}/>
+                <Route path="/dashboard" element={<Authcheck><DashboardPage /></Authcheck>}/>
             </Routes>
             <Toaster/>
         </>

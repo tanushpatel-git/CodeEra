@@ -2,3 +2,12 @@
 html, body {
     background: black;
 }
+/* Remove scrollbar globally */
+::-webkit-scrollbar {
+    display: none;
+}
+
+html {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

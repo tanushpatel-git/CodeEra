@@ -46,7 +46,7 @@ const HomeNavbar = () => {
                     onClick={() => {
                         setIsLogin(!isLogin)
                     }}
-                    className="px-5 py-1.5 rounded-full bg-white text-blue-700 text-sm font-semibold">
+                    className="px-5 py-1.5 rounded-full cursor-pointer active:scale-95 bg-white text-blue-700 text-sm font-semibold">
                     Login
                 </button> : null}
                 {email !== "" ? <button
@@ -56,7 +56,7 @@ const HomeNavbar = () => {
                         dispatch(updateEmail(""));
                         status === "success" ? toast.success(message) : toast.error(message)
                     }}
-                    className="px-5 py-1.5 rounded-full bg-white text-blue-700 text-sm font-semibold">
+                    className="px-5 py-1.5 rounded-full active:scale-95 cursor-pointer bg-white text-blue-700 text-sm font-semibold">
                     Log out
                 </button> : null}
 

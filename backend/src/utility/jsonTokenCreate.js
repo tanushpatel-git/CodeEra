@@ -19,7 +19,7 @@ const tokenVerify = async (token) => {
         }
         return await jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
-        console.error("token is not verify issue", err)
+        console.error("token is not verify issue")
         throw err;
     }
 }

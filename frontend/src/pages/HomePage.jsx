@@ -67,7 +67,7 @@ export default function HomePage() {
 
             {/* Premium Dark Green Gradient */}
 
-            <div className="absolute inset-0 bg-gradient-to-br from-[#022c22] via-[#064e3b] to-[#021a14] opacity-90" />
+            <div className="absolute inset-0 bg-linear-to-br from-[#022c22] via-[#064e3b] to-[#021a14] opacity-90" />
 
             {/* Extra Radial Glow */}
 
@@ -78,18 +78,18 @@ export default function HomePage() {
             <motion.div
                 animate={{ x: [0, 100, -100, 0], y: [0, 50, -50, 0] }}
                 transition={{ duration: 20, repeat: Infinity }}
-                className="absolute w-[600px] h-[600px] bg-emerald-500 rounded-full blur-[200px] opacity-35"
+                className="absolute w-150 h-150 bg-emerald-500 rounded-full blur-[200px] opacity-35"
             />
 
             <motion.div
                 animate={{ x: [0, -120, 80, 0], y: [0, -80, 40, 0] }}
                 transition={{ duration: 25, repeat: Infinity }}
-                className="absolute right-0 bottom-0 w-[500px] h-[500px] bg-green-500 rounded-full blur-[200px] opacity-35"
+                className="absolute right-0 bottom-0 w-125 h-125 bg-green-500 rounded-full blur-[200px] opacity-35"
             />
 
             {/* GRID BACKGROUND */}
 
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px]" />
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-size-[40px_40px]" />
 
             {/* NAVBAR */}
 
@@ -113,7 +113,7 @@ export default function HomePage() {
                 className="relative z-10"
             >
 
-                <div className="w-[600px] bg-[#0b1a14] rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+                <div className="w-150 bg-[#0b1a14] rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
 
                     {/* editor top */}
 
@@ -143,7 +143,7 @@ export default function HomePage() {
                 initial={{ y: 60, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="absolute left-16 bottom-20 bg-white/90 rounded-2xl p-4 shadow-xl w-[210px]"
+                className="absolute left-16 bottom-20 bg-white/90 rounded-2xl p-4 shadow-xl w-52.5"
             >
                 <div className="flex items-center gap-3">
                     <Video className="text-emerald-600" />
@@ -158,7 +158,7 @@ export default function HomePage() {
                 initial={{ y: 60, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
-                className="absolute right-16 bottom-24 bg-white/90 rounded-2xl p-4 shadow-xl w-[210px]"
+                className="absolute right-16 bottom-24 bg-white/90 rounded-2xl p-4 shadow-xl w-52.5"
             >
                 <div className="flex items-center gap-3">
                     <MessageCircle className="text-emerald-600" />
@@ -173,7 +173,7 @@ export default function HomePage() {
                 initial={{ y: 60, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="absolute right-40 top-32 bg-white/90 rounded-2xl p-4 shadow-xl w-[210px]"
+                className="absolute right-40 top-32 bg-white/90 rounded-2xl p-4 shadow-xl w-52.5"
             >
                 <div className="flex items-center gap-3">
                     <Code2 className="text-emerald-600" />

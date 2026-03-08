@@ -155,9 +155,9 @@ const LoginPopUp = ({onClick}) => {
 
                         <button
                             type="submit"
-                            className="w-full py-3 rounded-lg font-semibold bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 transition"
+                            className="w-full py-3 cursor-pointer rounded-lg font-semibold bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 transition"
                         >
-                            {isLogin ? "Login" : "Register"}
+                            {isLogin ? (loading ? "Login..." : "Login") : (loading ? "Registration..." : "Registration")}
                         </button>
 
                     </form>
@@ -173,7 +173,7 @@ const LoginPopUp = ({onClick}) => {
                                     onClick={() => setIsLogin(false)}
                                     className="text-emerald-400 hover:text-emerald-300"
                                 >
-                                    {loading ? "Registering..." : "Register"}
+                                    Registration
                                 </button>
                             </>
                         ) : (
@@ -183,7 +183,7 @@ const LoginPopUp = ({onClick}) => {
                                     onClick={() => setIsLogin(true)}
                                     className="text-emerald-400 hover:text-emerald-300"
                                 >
-                                    {loading ? "Logging in..." : "Login"}
+                                    Login
                                 </button>
                             </>
                         )}
