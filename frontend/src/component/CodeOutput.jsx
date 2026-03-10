@@ -1,8 +1,44 @@
-import React from 'react'
+import React from "react";
 
-const CodeOutput = () => {
+const CodeOutput = ({ output = "" }) => {
+
+    const isError =
+        output.toLowerCase().includes("error") ||
+        output.toLowerCase().includes("traceback") ||
+        output.toLowerCase().includes("exception");
+
     return (
-        <div className="text-white">CodeOutput</div>
-    )
-}
-export default CodeOutput
+        <div className="w-full h-full bg-zinc-900 border border-zinc-700 rounded-xl flex flex-col">
+
+            {/* Header */}
+            <div className="flex justify-between items-center px-4 py-2 border-b border-zinc-700 bg-zinc-800 rounded-t-xl">
+                <h2 className="text-white text-sm font-semibold">Output</h2>
+
+                <span
+                    className={`text-xs font-medium ${
+                        isError ? "text-red-400" : "text-green-400"
+                    }`}
+                >
+          {isError ? "Compilation Error" : "Success"}
+        </span>
+            </div>
+
+            {/* Console */}
+            <div className="flex-1 p-4 overflow-auto font-mono text-sm">
+                {output ? (
+                    <pre
+                        className={`whitespace-pre-wrap ${
+                            isError ? "text-red-400" : "text-green-400"
+                        }`}
+                    >
+            {output}
+          </pre>
+                ) : (
+                    <p className="text-zinc-500">Run your code to see output...</p>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default CodeOutput;

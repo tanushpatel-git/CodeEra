@@ -52,7 +52,7 @@ print(twoSum([3, 2, 4], 6))  # Expected: [1, 2]
 print(twoSum([3, 3], 6))  # Expected: [0, 1]`,
             java: `import java.util.*;
 
-class Solution {
+public class Solution {
     public static int[] twoSum(int[] nums, int target) {
         // Write your solution here
         
@@ -121,7 +121,7 @@ reverseString(test2)
 print(test2)  # Expected: ["h","a","n","n","a","H"]`,
             java: `import java.util.*;
 
-class Solution {
+public class Solution {
     public static void reverseString(char[] s) {
         // Write your solution here
         
@@ -191,7 +191,7 @@ console.log(isPalindrome(" ")); // Expected: true`,
 print(isPalindrome("A man, a plan, a canal: Panama"))  # Expected: True
 print(isPalindrome("race a car"))  # Expected: False
 print(isPalindrome(" "))  # Expected: True`,
-            java: `class Solution {
+            java: `public class Solution {
     public static boolean isPalindrome(String s) {
         // Write your solution here
         
@@ -257,7 +257,7 @@ console.log(maxSubArray([5,4,-1,7,8])); // Expected: 23`,
 print(maxSubArray([-2,1,-3,4,-1,2,1,-5,4]))  # Expected: 6
 print(maxSubArray([1]))  # Expected: 1
 print(maxSubArray([5,4,-1,7,8]))  # Expected: 23`,
-            java: `class Solution {
+            java: `public class Solution {
     public static int maxSubArray(int[] nums) {
         // Write your solution here
         
@@ -320,7 +320,7 @@ console.log(maxArea([1,1])); // Expected: 1`,
 # Test cases
 print(maxArea([1,8,6,2,5,4,8,3,7]))  # Expected: 49
 print(maxArea([1,1]))  # Expected: 1`,
-            java: `class Solution {
+            java: `public class Solution {
     public static int maxArea(int[] height) {
         // Write your solution here
         

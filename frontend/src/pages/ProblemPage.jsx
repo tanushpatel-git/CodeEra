@@ -19,7 +19,7 @@ const ProblemPage = () => {
     const [currentProblemId, setCurrentProblemId] = useState("two-sum");
     const [selectedLanguage, setSelectedLanguage] = useState("javascript");
     const [code, setCode] = useState(PROBLEMS[currentProblemId].starterCode.javascript);
-    const [output, setOutput] = useState(null);
+    const [output, setOutput] = useState("");
     const [isRunning, setIsRunning] = useState(false);
     const currentProblem = PROBLEMS[currentProblemId];
 
@@ -27,14 +27,14 @@ const ProblemPage = () => {
         if (id && PROBLEMS[id]) {
             setCurrentProblemId(id);
             setCode(PROBLEMS[id].starterCode[selectedLanguage]);
-            setOutput(null);
+            setOutput("");
 
         }
     }, [id, selectedLanguage])
 
     const handleLanguageChange = (lang) => {
         setSelectedLanguage(lang);
-        setOutput(null);
+        setOutput("");
         setCode(currentProblem.starterCode[lang]);
     }
     const handleProblemChange = (id) => {
@@ -59,17 +59,25 @@ const ProblemPage = () => {
     };
 
     const executeSuccess = (actualOutput,expectedOutput) => {
-        // const normalizeActualCode = normalizeOutput(actualOutput);
-        // const normalizeExpected = normalizeOutput(expectedOutput);
+        const normalizeActualCode = normalizeOutput(actualOutput);
+        const normalizeExpected = normalizeOutput(expectedOutput);
 
-        return actualOutput === expectedOutput;
+        if(normalizeActualCode === normalizeExpected){
+            setOutput(normalizeActualCode);
+            return true;
+        }else{
+            setOutput(normalizeActualCode)
+            return false;
+        }
+
     }
+
     const handleCodeExecute = async () => {
         setIsRunning(true);
-        setOutput(null);
+        setOutput("");
 
         const result = await executeCode(selectedLanguage,code);
-        setOutput(result);
+        setOutput(result.output);
         setIsRunning(false);
 
         //check if it is executed or not
