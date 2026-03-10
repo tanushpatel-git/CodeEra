@@ -9,6 +9,8 @@ const userRoute = require('./routes/user.routes')
 const videoRoute = require('./routes/videoCalling.routes')
 const chatRoute = require('./routes/chat.routes')
 const sessionRoute = require('./routes/session.routes')
+const codeExecuteController = require('./controllers/codeExecute.controller')
+
 
 const swaggerOptions = {
     swaggerDefinition: {
@@ -63,6 +65,9 @@ app.use("/access", videoRoute);
 app.use("/chat", chatRoute);
 app.use("/session", sessionRoute);
 
+
+//Post api
+app.post("/run", codeExecuteController );
 
 
 module.exports = app;

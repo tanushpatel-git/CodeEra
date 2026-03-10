@@ -1,280 +1,172 @@
-import React, {useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {difficultyStyle} from '../hook/difficultyStyle.js'
-
-import MainNavbar from "../component/MainNavbar.jsx";
+import React, {useEffect, useState} from 'react'
+import {useNavigate, useParams} from "react-router-dom";
 import {PROBLEMS} from "../data/problems.js";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import MainNavbar from "../component/MainNavbar.jsx";
+import ProblemDescription from "../component/ProblemDescription.jsx";
+import CodeEditor from "../component/CodeEditor.jsx";
+import CodeOutput from "../component/CodeOutput.jsx";
+import executeCode from "../lib/piston.js";
+import toast from "react-hot-toast";
+import confetti from 'canvas-confetti'
+
 
 const ProblemPage = () => {
-    const problems = Object.values(PROBLEMS);
 
-    /* ---------------------- STATE ---------------------- */
-
-    const [search, setSearch] = useState("");
-    const [difficulty, setDifficulty] = useState("All");
+    const {id} = useParams();
     const navigate = useNavigate();
 
-    /* ---------------------- FILTER ---------------------- */
+    const [currentProblemId, setCurrentProblemId] = useState("two-sum");
+    const [selectedLanguage, setSelectedLanguage] = useState("javascript");
+    const [code, setCode] = useState(PROBLEMS[currentProblemId].starterCode.javascript);
+    const [output, setOutput] = useState(null);
+    const [isRunning, setIsRunning] = useState(false);
+    const currentProblem = PROBLEMS[currentProblemId];
 
-    const filteredProblems = problems.filter((problem) => {
-        const matchesSearch = problem.title
-            .toLowerCase()
-            .includes(search.toLowerCase());
+    useEffect(() => {
+        if (id && PROBLEMS[id]) {
+            setCurrentProblemId(id);
+            setCode(PROBLEMS[id].starterCode[selectedLanguage]);
+            setOutput(null);
 
-        const matchesDifficulty = difficulty === "All" || problem.difficulty === difficulty;
+        }
+    }, [id, selectedLanguage])
 
-        return matchesSearch && matchesDifficulty;
-    });
+    const handleLanguageChange = (lang) => {
+        setSelectedLanguage(lang);
+        setOutput(null);
+        setCode(currentProblem.starterCode[lang]);
+    }
+    const handleProblemChange = (id) => {
+        navigate(`/problem/${id}`);
+    }
+    const normalizeOutput = (output) => {
+        // normalize output for comparison (trim whitespace, handle different spacing)
+        return output
+            .trim()
+            .split("\n")
+            .map((line) =>
+                line
+                    .trim()
+                    // remove spaces after [ and before ]
+                    .replace(/\[\s+/g, "[")
+                    .replace(/\s+\]/g, "]")
+                    // normalize spaces around commas to single space after comma
+                    .replace(/\s*,\s*/g, ",")
+            )
+            .filter((line) => line.length > 0)
+            .join("\n");
+    };
 
-    /* ---------------------- STATS ---------------------- */
+    const executeSuccess = (actualOutput,expectedOutput) => {
+        // const normalizeActualCode = normalizeOutput(actualOutput);
+        // const normalizeExpected = normalizeOutput(expectedOutput);
 
-    const totalProblems = problems.length;
+        return actualOutput === expectedOutput;
+    }
+    const handleCodeExecute = async () => {
+        setIsRunning(true);
+        setOutput(null);
 
-    const easyCount = problems.filter((p) => p.difficulty === "Easy").length;
+        const result = await executeCode(selectedLanguage,code);
+        setOutput(result);
+        setIsRunning(false);
 
-    const mediumCount = problems.filter((p) => p.difficulty === "Medium").length;
+        //check if it is executed or not
+        if (result.success) {
+            const expectedOutput = currentProblem.expectedOutput[selectedLanguage];
+            const testOutput = executeSuccess(result.output,expectedOutput);
 
-    const hardCount = problems.filter((p) => p.difficulty === "Hard").length;
+            if (testOutput) {
+                triggerConfetii();
+                toast.success("All test passed successfully!");
+            }else{
+                toast.error("Test failed.Check your problem.");
+            }
+        }else{
+            toast("Code Execution failed!");
+        }
 
-    const easyPercent = (easyCount / totalProblems) * 100;
-    const mediumPercent = (mediumCount / totalProblems) * 100;
-    const hardPercent = (hardCount / totalProblems) * 100;
+    }
+
+    const triggerConfetii = () => {
+            confetti({
+                particleCount: 80,
+                spread: 250,
+                origin: {x:0.2,  y: 0.6 },
+            });
+
+            confetti({
+                particleCount: 150,
+                spread: 250,
+                origin: { x:0.8, y: 0.6 },
+            });
+    }
 
 
-    /* ---------------------- UI ---------------------- */
+    return (
+        <div className="h-screen w-screen flex flex-col bg-zinc-950 text-zinc-200">
 
-    return (<section className="min-h-screen bg-black text-white">
-        <MainNavbar/>
+            {/* NAVBAR */}
+                <MainNavbar />
 
-        <div className="max-w-7xl mx-auto px-6 py-12">
+            {/* MAIN CONTENT */}
+            <div className="flex-1 overflow-hidden mt-10">
 
-            {/* ---------------- PAGE TITLE ---------------- */}
+                <PanelGroup direction="horizontal">
 
-            <div className="text-center mb-12">
-
-                <h1 className="
-    text-4xl
-    md:text-5xl
-    font-extrabold
-    tracking-tight
-    text-white
-  ">
-                    Coding <span className="text-green-500">Problems</span>
-                </h1>
-
-                <p className="text-gray-400 mt-3 text-sm md:text-base">
-                    Practice coding challenges and improve your problem-solving skills
-                </p>
-
-                <div className="flex justify-center mt-6">
-                    <div className="w-24 h-0.75 bg-green-600 rounded-full"></div>
-                </div>
-
-            </div>
-
-            {/* ---------------- SEARCH + FILTER ---------------- */}
-
-            <div className="flex flex-col md:flex-row gap-4 mb-12">
-
-                <input
-                    type="text"
-                    placeholder="Search problems..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="
-              w-full
-              bg-[#111]
-              border border-gray-700
-              rounded-lg
-              px-4 py-2
-              text-white
-              placeholder-gray-400
-              focus:outline-none
-              focus:border-[#05402A]
-            "
-                />
-
-                <select
-                    value={difficulty}
-                    onChange={(e) => setDifficulty(e.target.value)}
-                    className="
-              bg-[#111]
-              border border-gray-700
-              rounded-lg
-              px-4 py-2
-              text-white
-              focus:outline-none
-              focus:border-[#05402A]
-            "
-                >
-                    <option value="All">All Difficulty</option>
-                    <option value="Easy">Easy</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Hard">Hard</option>
-                </select>
-
-            </div>
-
-            {/* ---------------- PROBLEM Tables ---------------- */}
-
-            <div className=" border border-gray-800 rounded-xl">
-
-                <table className="w-full text-left">
-
-                    {/* Header */}
-                    <thead className="bg-[#111] border-b border-gray-800 sticky top-0">
-                    <tr>
-                        <th className="px-6 py-4 text-sm text-gray-400">Title</th>
-                        <th className="px-6 py-4 text-sm text-gray-400">Difficulty</th>
-                        <th className="px-6 py-4 text-sm text-gray-400">Category</th>
-                        <th className="px-6 py-4 text-sm text-gray-400">Description</th>
-                    </tr>
-                    </thead>
-
-                    {/* Body */}
-                    <tbody>
-
-                    {filteredProblems.map((problem) => (
-
-                        <tr
-                            key={problem.id}
-                            onClick={() => navigate(`/problem/${problem.id}`)}
-                            className="
-            border-b border-gray-800
-            hover:bg-[#0f0f0f]
-            hover:border-green-500
-            cursor-pointer
-            transition
-          "
-                        >
-
-                            {/* Title */}
-                            <td className="px-6 py-4 font-medium">
-                                {problem.title}
-                            </td>
-
-                            {/* Difficulty */}
-                            <td className="px-6 py-4">
-            <span
-                className={`
-                text-xs
-                px-3 py-1
-                border
-                rounded-full
-                ${difficultyStyle(problem.difficulty)}
-              `}
-            >
-              {problem.difficulty}
-            </span>
-                            </td>
-
-                            {/* Category */}
-                            <td className="px-6 py-4 text-gray-400 text-sm">
-                                {problem.category}
-                            </td>
-
-                            {/* Description */}
-                            <td className="px-6 py-4 text-gray-300 text-sm max-w-md truncate">
-                                {problem.description.text}
-                            </td>
-
-                        </tr>
-
-                    ))}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-            {/* ---------------- STATS SECTION ---------------- */}
-
-            <div className="mt-20">
-
-                <h2 className="text-2xl font-semibold mb-8">
-                    Problem Overview
-                </h2>
-
-                <div className="grid md:grid-cols-4 gap-6">
-
-                    {/* TOTAL */}
-
-                    <div className="bg-[#0f0f0f] border border-gray-800 rounded-xl p-6">
-                        <p className="text-gray-400 text-sm">
-                            Total Problems
-                        </p>
-                        <h3 className="text-3xl font-bold mt-2">
-                            {totalProblems}
-                        </h3>
-                    </div>
-
-                    {/* EASY */}
-
-                    <div className="bg-[#0f0f0f] border border-gray-800 rounded-xl p-6">
-
-                        <div className="flex justify-between mb-3">
-                            <p className="text-green-400 font-medium">
-                                Easy
-                            </p>
-                            <span>{easyCount}</span>
-                        </div>
-
-                        <div className="w-full bg-gray-800 rounded-full h-2">
-                            <div
-                                className="bg-green-500 h-2 rounded-full"
-                                style={{width: `${easyPercent}%`}}
+                    {/* LEFT PANEL (Problem Description) */}
+                    <Panel defaultSize={40} minSize={30} className="bg-zinc-950">
+                        <div className="h-full overflow-hidden border-r border-zinc-800">
+                            <ProblemDescription
+                                problem={currentProblem}
+                                problemId={currentProblemId}
+                                onProblemChange={handleProblemChange}
+                                allProblem={Object.values(PROBLEMS)}
                             />
                         </div>
+                    </Panel>
 
-                    </div>
+                    {/* RESIZE HANDLE */}
+                    <PanelResizeHandle className="w-1 bg-zinc-800 hover:bg-blue-500 transition-colors" />
 
-                    {/* MEDIUM */}
+                    {/* RIGHT PANEL */}
+                    <Panel defaultSize={60} minSize={30}>
 
-                    <div className="bg-[#0f0f0f] border border-gray-800 rounded-xl p-6">
+                        <PanelGroup direction="vertical">
 
-                        <div className="flex justify-between mb-3">
-                            <p className="text-yellow-400 font-medium">
-                                Medium
-                            </p>
-                            <span>{mediumCount}</span>
-                        </div>
+                            {/* CODE EDITOR */}
+                            <Panel defaultSize={70} minSize={40}>
+                                <div className="h-full border-b border-zinc-800 bg-zinc-950">
+                                    <CodeEditor
+                                        code={code}
+                                        selectedLanguage={selectedLanguage}
+                                        onLanguageChange={handleLanguageChange}
+                                        onCodeChange={setCode}
+                                        onRunCode={handleCodeExecute}
+                                        isRunning={isRunning}
+                                    />
+                                </div>
+                            </Panel>
 
-                        <div className="w-full bg-gray-800 rounded-full h-2">
-                            <div
-                                className="bg-yellow-500 h-2 rounded-full"
-                                style={{width: `${mediumPercent}%`}}
-                            />
-                        </div>
+                            {/* RESIZE HANDLE */}
+                            <PanelResizeHandle className="h-1 bg-zinc-800 hover:bg-blue-500 transition-colors" />
 
-                    </div>
+                            {/* OUTPUT PANEL */}
+                            <Panel defaultSize={30} minSize={20}>
+                                <div className="h-full bg-zinc-900">
+                                    <CodeOutput output={output} />
+                                </div>
+                            </Panel>
 
-                    {/* HARD */}
+                        </PanelGroup>
 
-                    <div className="bg-[#0f0f0f] border border-gray-800 rounded-xl p-6">
+                    </Panel>
 
-                        <div className="flex justify-between mb-3">
-                            <p className="text-red-400 font-medium">
-                                Hard
-                            </p>
-                            <span>{hardCount}</span>
-                        </div>
-
-                        <div className="w-full bg-gray-800 rounded-full h-2">
-                            <div
-                                className="bg-red-500 h-2 rounded-full"
-                                style={{width: `${hardPercent}%`}}
-                            />
-                        </div>
-
-                    </div>
-
-                </div>
+                </PanelGroup>
 
             </div>
-
         </div>
-    </section>);
-};
-
-export default ProblemPage;
+    );
+}
+export default ProblemPage
