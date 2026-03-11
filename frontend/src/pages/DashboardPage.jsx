@@ -1,4 +1,3 @@
-import React from 'react'
 import MainNavbar from "../component/MainNavbar.jsx";
 
 const DashboardPage = () => {
@@ -6,6 +5,9 @@ const DashboardPage = () => {
             <div className="bg-black text-white h-screen w-full">
                 <MainNavbar/>
                 <h1>DashBoard Pages</h1>
+                <div>
+                    
+                </div>
             </div>
     )
 }

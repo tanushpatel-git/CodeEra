@@ -63,7 +63,7 @@ app.use(cookieParser());
 app.use("/user" ,userRoute)
 app.use("/access", videoRoute);
 app.use("/chat", chatRoute);
-app.use("/session", sessionRoute);
+app.use("/sessions", sessionRoute);
 
 
 //Post api
