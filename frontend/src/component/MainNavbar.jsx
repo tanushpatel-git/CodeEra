@@ -1,13 +1,13 @@
 import React, {useEffect} from 'react'
 import {useDispatch, useSelector} from "react-redux";
 import {getUser, logOutUser} from "../service/loginService.js";
-import {updateEmail, updateUser} from "../redux/userDetails/userDetail.js";
+import {updateEmail, updateId, updateImage, updateUser} from "../redux/userDetails/userDetail.js";
 import toast from "react-hot-toast";
 import {Link} from "react-router-dom";
 
 const MainNavbar = () => {
 
-    const {emailM, nameM} = useSelector(stateM => stateM.userData.user);
+    const {email: emailM, name: nameM} = useSelector(stateM => stateM.userData?.user );
     const dispatchM = useDispatch();
 
     const getInfo = async () => {
@@ -16,13 +16,19 @@ const MainNavbar = () => {
             if (userData && userData.name) {
                 dispatchM(updateUser(userData.name));
                 dispatchM(updateEmail(userData.email));
+                dispatchM(updateId(userData.id));
+                dispatchM(updateImage(userData.image));
             } else {
                 dispatchM(updateUser(""));
                 dispatchM(updateEmail(""));
+                dispatchM(updateId(""));
+                dispatchM(updateImage(""));
             }
         } catch (error) {
             dispatchM(updateUser(""));
             dispatchM(updateEmail(""));
+            dispatchM(updateId(""));
+            dispatchM(updateImage(""));
         }
     }
 
@@ -53,6 +59,8 @@ const MainNavbar = () => {
                         const {message, status} = await logOutUser();
                         dispatchM(updateUser(""));
                         dispatchM(updateEmail(""));
+                        dispatchM(updateId(""));
+                        dispatchM(updateImage(""));
                         status === "success" ? toast.success(message) : toast.error(message)
                     }}
                     className="px-5 py-1.5 rounded-full active:scale-95 cursor-pointer bg-green-600 hover:bg-red-600 transition-all duration-300 text-white text-sm font-semibold">

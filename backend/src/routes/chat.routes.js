@@ -19,7 +19,7 @@ const auth = require("../middleware/jsonWebTokenCheck.middleware")
  *       500:
  *         description: Internal Server Error
  */
-router.get("/token" , auth, getStreamToken)
 
+router.get("/token" , auth, getStreamToken)
 
 module.exports = router;

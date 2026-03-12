@@ -38,9 +38,10 @@ const createSession = async (req, res) => {
     }
 }
 
+
 const getActiveSession = async (_, res) => {
     try {
-        const session = await Session.find({status: "active"}).populate("host", "name _id email").sort({createdAt: -1}).limit(20)
+        const session = await Session.find({status: "active"}).populate("host", "name _id email image").sort({createdAt: -1}).limit(20)
         return res.status(200).json({session})
     } catch (err) {
         console.log(err);
@@ -49,6 +50,7 @@ const getActiveSession = async (_, res) => {
         })
     }
 }
+
 
 const getMyRecentSession = async (req, res) => {
     try {
@@ -71,6 +73,7 @@ const getMyRecentSession = async (req, res) => {
     }
 }
 
+
 const getSessionById = async (req, res) => {
     try{
         const {id} = req.params;
@@ -84,6 +87,7 @@ const getSessionById = async (req, res) => {
         })
     }
 }
+
 
 const joinSession = async (req, res) => {
     try{
@@ -111,6 +115,7 @@ const joinSession = async (req, res) => {
         return res.status(500).json({message: "Internal Server Error"})
     }
 }
+
 
 const endSession = async (req, res) => {
     try{

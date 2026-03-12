@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import LoginPopUp from "./LoginPopUp.jsx";
 import {useDispatch, useSelector} from "react-redux";
 import {getUser, logOutUser} from "../service/loginService.js";
-import {updateEmail, updateUser} from "../redux/userDetails/userDetail.js";
+import {updateEmail, updateId, updateImage, updateUser} from "../redux/userDetails/userDetail.js";
 import toast from "react-hot-toast";
 
 const HomeNavbar = () => {
@@ -17,9 +17,13 @@ const HomeNavbar = () => {
             if (userData && userData.name) {
                 dispatch(updateUser(userData.name));
                 dispatch(updateEmail(userData.email));
+                dispatch(updateId(userData.id));
+                dispatch(updateImage(userData.image));
             } else {
                 dispatch(updateUser(""));
                 dispatch(updateEmail(""));
+                dispatch(updateId(""));
+                dispatch(updateImage(""));
             }
         } catch (error) {
             dispatch(updateUser(""));
@@ -54,6 +58,8 @@ const HomeNavbar = () => {
                         const {message, status} = await logOutUser();
                         dispatch(updateUser(""));
                         dispatch(updateEmail(""));
+                        dispatch(updateId(""));
+                        dispatch(updateImage(""));
                         status === "success" ? toast.success(message) : toast.error(message)
                     }}
                     className="px-5 py-1.5 rounded-full active:scale-95 cursor-pointer bg-white text-blue-700 text-sm font-semibold">

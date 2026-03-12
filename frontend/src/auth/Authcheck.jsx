@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { getUser } from "../service/loginService.js";
 import { Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { updateEmail, updateUser } from "../redux/userDetails/userDetail.js";
+import {updateEmail, updateId, updateImage, updateUser} from "../redux/userDetails/userDetail.js";
 
 const Authcheck = ({ children}) => {
 
@@ -17,11 +17,15 @@ const Authcheck = ({ children}) => {
             if (userData && userData.name && userData.email) {
                 dispatch(updateUser(userData.name));
                 dispatch(updateEmail(userData.email));
+                dispatch(updateId(userData.id));
+                dispatch(updateImage(userData.image));
             }
             setLoading(false);
         } catch (error) {
             dispatch(updateUser(""));
             dispatch(updateEmail(""));
+            dispatch(updateId(""));
+            dispatch(updateImage(""));
             setLoading(false);
         }
     }

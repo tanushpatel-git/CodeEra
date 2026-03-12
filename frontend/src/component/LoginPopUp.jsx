@@ -1,7 +1,7 @@
 import {React, useState} from 'react'
 import {createUser, loginUser, getUser} from "../service/loginService.js";
 import {useDispatch} from "react-redux";
-import {updateEmail, updateUser} from "../redux/userDetails/userDetail.js";
+import {updateEmail, updateUser, updateImage, updateId} from "../redux/userDetails/userDetail.js";
 import toast from "react-hot-toast";
 
 const LoginPopUp = ({onClick}) => {
@@ -44,6 +44,8 @@ const LoginPopUp = ({onClick}) => {
             if (userData && userData.name) {
                 dispatch(updateUser(userData.name));
                 dispatch(updateEmail(userData.email));
+                dispatch(updateImage(userData.image));
+                dispatch(updateId(userData.id));
             }
             onClick();
         }
@@ -74,6 +76,8 @@ const LoginPopUp = ({onClick}) => {
             if (userData && userData.name) {
                 dispatch(updateUser(userData.name));
                 dispatch(updateEmail(userData.email));
+                dispatch(updateImage(userData.image));
+                dispatch(updateId(userData.id));
             }
             onClick();
         }
