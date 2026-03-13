@@ -1,11 +1,11 @@
 import React from "react";
 
-const CodeOutput = ({ output = "" }) => {
-
+const CodeOutput = ({ output }) => {
+    const normalizedOutput = output?.output ?? output ?? "";
     const isError =
-        output.toLowerCase().includes("error") ||
-        output.toLowerCase().includes("traceback") ||
-        output.toLowerCase().includes("exception");
+        normalizedOutput.toLowerCase().includes("error") ||
+        normalizedOutput.toLowerCase().includes("traceback") ||
+        normalizedOutput.toLowerCase().includes("exception");
 
     return (
         <div className="w-full h-full bg-zinc-900 border border-zinc-700 rounded-xl flex flex-col">
@@ -25,13 +25,13 @@ const CodeOutput = ({ output = "" }) => {
 
             {/* Console */}
             <div className="flex-1 p-4 overflow-auto font-mono text-sm">
-                {output ? (
+                {normalizedOutput ? (
                     <pre
                         className={`whitespace-pre-wrap ${
                             isError ? "text-red-400" : "text-green-400"
                         }`}
                     >
-            {output}
+            {normalizedOutput}
           </pre>
                 ) : (
                     <p className="text-zinc-500">Run your code to see output...</p>

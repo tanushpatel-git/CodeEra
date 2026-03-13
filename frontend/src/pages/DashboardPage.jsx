@@ -18,13 +18,12 @@ const DashboardPage = () => {
     const createSessionMutation = useCreateSession();
     const {data:activeSessionData,isLoading:loadingActiveSession} = useActiveSession();
     const {data:recentSessionData, isLoading:loadingRecentSession} = useMyRecentSession();
-    const activeSession = activeSessionData?.session || [];
-    const recentSession = recentSessionData?.session || [];
 
+    const activeSessionCount = activeSessionData?.session || [];
+    const recentSessionCount = recentSessionData?.session || [];
 
     const handleCreateRoom = () => {
-        console.log("Creating room with:", roomConfig);
-        
+
         if(!roomConfig.problem || !roomConfig.difficulty) {
             toast.error("Please select a problem");
             return;
@@ -36,9 +35,16 @@ const DashboardPage = () => {
         },{
             onSuccess: (data) => {
                 setShowCreateModel(false);
-                navigate(`session/${data?.session?._id}`);
+                navigate(`/session/${data?.session?._id}`);
             }
         })
+    }
+
+
+    const isUserInSession = (session) => {
+        if(!id) return false;
+
+        return session.host?._id === id || session.participant?._id === id;
     }
 
 
@@ -53,12 +59,19 @@ const DashboardPage = () => {
                         <div className="mx-auto px-6 pb-16">
                             <div className="grid lg:grid-cols-3 grid-cols-1 gap-6">
                                 <StatsCard
-                                    activeSessionCount={activeSession.length}
-                                    recentSessionCount={recentSession.length}
+                                    activeSessionCount={activeSessionCount.length}
+                                    recentSessionCount={recentSessionCount.length}
                                 />
-                                <ActiveSession/>
+                                <ActiveSession
+                                sessions={activeSessionCount}
+                                loading={loadingActiveSession}
+                                isUserInSession={isUserInSession}
+                                />
                             </div>
-                            <RecentSession/>
+                            <RecentSession
+                                sessions={recentSessionCount}
+                                isLoading={loadingRecentSession}
+                            />
                         </div>
                     </div>
                 </div>

@@ -1,4 +1,5 @@
 const Session = require("../models/Session.model");
+const mongoose = require("mongoose");
 const {streamClient, chatClient} = require("../utility/stream");
 
 
@@ -41,7 +42,11 @@ const createSession = async (req, res) => {
 
 const getActiveSession = async (_, res) => {
     try {
-        const session = await Session.find({status: "active"}).populate("host", "name _id email image").sort({createdAt: -1}).limit(20)
+        const session = await Session.find({status: "active"})
+            .populate("host", "name _id email image")
+            .populate("participant", "name _id email image")
+            .sort({createdAt: -1})
+            .limit(20)
         return res.status(200).json({session})
     } catch (err) {
         console.log(err);
@@ -54,14 +59,18 @@ const getActiveSession = async (_, res) => {
 
 const getMyRecentSession = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = new mongoose.Types.ObjectId(req.user.id);
         const session = await Session.find({
             status: "completed", $or: [{
                 host: userId
             }, {
                 participant: userId
             }]
-        }).sort({createdAt: -1}).limit(20);
+        })
+        .populate("host", "name _id email image")
+        .populate("participant", "name _id email image")
+        .sort({createdAt: -1})
+        .limit(20);
 
         return res.status(200).json({session})
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import {TrophyIcon, UsersIcon} from "lucide-react";
 
-const StatsCard = ({ activeSessionsCount, recentSessionsCount }) => {
+const StatsCard = ({ activeSessionCount, recentSessionCount }) => {
 
     return (
         <div className="lg:col-span-1 grid grid-cols-1 gap-6">
@@ -25,7 +25,7 @@ const StatsCard = ({ activeSessionsCount, recentSessionsCount }) => {
                 </div>
 
                 <div className="text-4xl font-bold text-gray-900 mb-1">
-                    {activeSessionsCount || 0}
+                    {activeSessionCount || 0}
                 </div>
 
                 <p className="text-sm text-gray-500">
@@ -49,7 +49,7 @@ const StatsCard = ({ activeSessionsCount, recentSessionsCount }) => {
                 </div>
 
                 <div className="text-4xl font-bold text-gray-900 mb-1">
-                    {recentSessionsCount || 0}
+                    {recentSessionCount || 0}
                 </div>
 
                 <p className="text-sm text-gray-500">
